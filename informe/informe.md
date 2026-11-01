@@ -1,10 +1,8 @@
 # Multiplicación rápida de enteros: algoritmo de Karatsuba
 
-**Análisis y Diseño de Algoritmos — Práctica 2 — Universidad EAFIT**
-Javier Andres Sierra Machado · Jeronimo Velez Acosta
+**Análisis y Diseño de Algoritmos — Práctica 2 — Universidad EAFIT**  
+Javier Andres Sierra Machado · Jeronimo Velez Acosta  
 Repositorio: `jero020/karatsuba-multiplicacion-rapida`
-
-> **Primera versión, pendiente de revisión.** Antes de entregar hay que resolver cada **[COMPLETAR]** y borrar este aviso.
 
 ## 1. Deducción de la identidad
 
@@ -67,13 +65,13 @@ El Teorema Maestro da el resultado; el árbol muestra de dónde sale. Sea c la c
 | 0 | 1 | n | cn | cn |
 | 1 | 3 | n/2 | cn/2 | cn(3/2) |
 | i | 3ⁱ | n/2ⁱ | cn/2ⁱ | cn(3/2)ⁱ |
-| log₂n | 3^(log₂n) | 1 | c | c·3^(log₂n) |
+| log₂n | 3<sup>log₂n</sup> | 1 | c | c·3<sup>log₂n</sup> |
 
 La altura es log₂n, porque el tamaño se reduce a la mitad hasta llegar a 1. El costo total es una suma geométrica de razón 3/2:
 
 $$T(n)=cn\sum_{i=0}^{\log_2 n}\left(\frac{3}{2}\right)^i = 3c\,n^{\log_2 3}-2cn=\Theta\left(n^{\log_2 3}\right).$$
 
-Como la razón es mayor que 1, cada nivel cuesta más que el anterior y la suma la dominan las hojas. Su número explica el exponente: 3^(log₂n) = n^(log₂3), porque cada nivel triplica los subproblemas y hay log₂n niveles. Con cuatro productos la razón sería 4/2 = 2 y habría 4^(log₂n) = n² hojas. Quitar un solo producto cambia el exponente, y por eso el ahorro no es solo una mejora constante.
+Como la razón es mayor que 1, cada nivel cuesta más que el anterior y la suma la dominan las hojas. Su número explica el exponente: 3<sup>log₂n</sup> = n<sup>log₂3</sup>, porque cada nivel triplica los subproblemas y hay log₂n niveles. Con cuatro productos la razón sería 4/2 = 2 y habría 4<sup>log₂n</sup> = n² hojas. Quitar un solo producto cambia el exponente, y por eso el ahorro no es solo una mejora constante.
 
 ## 3. Representación e implementación
 
@@ -85,7 +83,7 @@ En `sumar` recorremos la longitud del operando más largo. Cuando un operando ya
 
 `restar` requiere que el primer operando sea mayor o igual que el segundo. En cada posición descontamos el préstamo anterior. Si la diferencia es negativa, sumamos 10 y trasladamos un préstamo a la siguiente posición. Al terminar normalizamos el resultado. La función lanza una excepción si queda un préstamo final, porque eso indica que se incumplió la precondición. La suma y la resta tienen costo lineal en la longitud del operando más largo.
 
-`desplazar(a, k)` multiplica por 10^k insertando k ceros en las posiciones bajas, con costo lineal. `partir(a, m, alta, baja)` copia los dígitos [0, m) en la parte baja y los restantes en la alta. No normaliza: conservar los ceros mantiene las longitudes, y el valor se recupera con alta·10^m + baja.
+`desplazar(a, k)` multiplica por 10<sup>k</sup> insertando k ceros en las posiciones bajas, con costo lineal. `partir(a, m, alta, baja)` copia los dígitos [0, m) en la parte baja y los restantes en la alta. No normaliza: conservar los ceros mantiene las longitudes, y el valor se recupera con alta·10<sup>m</sup> + baja.
 
 `multiplicacionClasica` reserva n + m dígitos, el máximo posible, y suma cada producto a[i]·b[j] en la posición i + j, propagando el acarreo. Cada paso suma como máximo 9 + 81 + 8 = 98, así que un `int` basta. Sus dos ciclos anidados dan Θ(n²).
 
@@ -128,7 +126,7 @@ Para comprobar que las pruebas detectan errores, introdujimos cinco fallos en co
 
 ![Tiempo por multiplicación frente al tamaño, en escala log-log](../resultados/grafica.png)
 
-**Orden de crecimiento.** Desde 32 dígitos, al duplicar el tamaño el clásico tarda unas 4 veces más y Karatsuba unas 3, los factores 2² y 2^(log₂3). Ajustando una recta en escala log-log desde 64 dígitos, las pendientes son 2.00 y 1.59, frente a 2 y 1.585 de la teoría. Excluimos los tamaños menores porque allí domina el costo fijo de cada llamada.
+**Orden de crecimiento.** Desde 32 dígitos, al duplicar el tamaño el clásico tarda unas 4 veces más y Karatsuba unas 3, los factores 2² y 2<sup>log₂3</sup>. Ajustando una recta en escala log-log desde 64 dígitos, las pendientes son 2.00 y 1.59, frente a 2 y 1.585 de la teoría. Excluimos los tamaños menores porque allí domina el costo fijo de cada llamada.
 
 **Punto de cruce.** No aparece en el rango medido: en 4096 dígitos, Karatsuba sigue siendo 33 veces más lenta. La razón baja desde 16 dígitos, de 329 a 33, así que la ventaja asintótica sí se observa, pero no alcanza. Si las pendientes se mantuvieran, el cruce llegaría hacia las decenas de millones de dígitos; es una extrapolación, no una medición.
 
@@ -150,5 +148,5 @@ La identidad de Karatsuba cambia cuatro productos por tres, y eso baja el expone
 
 ## 8. Declaración de uso de IA
 
-- **Jeronimo Velez Acosta:** usó Claude (Claude Code, modelo Opus 5.5) en la parte B. Claude escribió `desplazar`, `partir`, `multiplicacionClasica`, `tests.cpp`, `benchmark.cpp` y `graficar.py`, explicó cada función, actualizó el README y redactó la primera versión de las secciones 2.2, 4, 5, 6 y 7, y de los párrafos sobre esas funciones en la sección 3. Jeronimo revisó el trabajo y **[COMPLETAR: qué cambió o reescribió él mismo]**.
+- **Jeronimo Velez Acosta:** usó Claude (Claude Code, modelo Opus 5.5) en la parte B. Claude escribió `desplazar`, `partir`, `multiplicacionClasica`, `tests.cpp`, `benchmark.cpp` y `graficar.py`, explicó cada función, actualizó el README y redactó la primera versión de las secciones 2.2, 4, 5, 6 y 7, y de los párrafos sobre esas funciones en la sección 3. Jeronimo pidió la explicación de cada función, aprobó cada paso y tomó las decisiones de usar la mediana, no incluir pruebas aleatorias, usar Python solo para la gráfica y no reescribir el historial de commits. Hasta esta versión, el código y esas secciones son los que generó Claude.
 - **Javier Andres Sierra Machado:** **[COMPLETAR: qué herramienta usó y para qué]**.
