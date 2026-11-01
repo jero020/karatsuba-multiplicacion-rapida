@@ -1,8 +1,12 @@
 #include "bigint.h"
 
 #include <chrono>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <random>
+#include <string>
+#include <vector>
 
 namespace {
 
@@ -45,10 +49,30 @@ double medirMicrosegundos(Multiplicacion algoritmo, const Num& a, const Num& b) 
     }
 }
 
+struct Medicion {
+    int digitos;
+    double clasica;
+    double karatsuba;
+};
+
+// Reemplaza el archivo con la corrida actual. Devuelve false si no se pudo escribir,
+// por ejemplo si el programa no se ejecuta desde la raiz del repositorio.
+bool guardarCsv(const std::vector<Medicion>& mediciones, const std::string& ruta) {
+    std::ofstream archivo(ruta);
+    archivo << "digitos,clasica_us,karatsuba_us\n";
+    archivo << std::fixed << std::setprecision(4);
+    for (const Medicion& m : mediciones) {
+        archivo << m.digitos << "," << m.clasica << "," << m.karatsuba << "\n";
+    }
+    return archivo.good();
+}
+
 }
 
 int main() {
+    const std::string ruta = "resultados/tiempos.csv";
     std::mt19937 generador(20261101);
+    std::vector<Medicion> mediciones;
 
     std::cout << "digitos  clasica_us  karatsuba_us\n";
     for (int n = 2; n <= 4096; n *= 2) {
@@ -57,7 +81,14 @@ int main() {
         const double clasica = medirMicrosegundos(multiplicacionClasica, a, b);
         const double rapida = medirMicrosegundos(karatsuba, a, b);
         std::cout << n << "  " << clasica << "  " << rapida << "\n";
+        mediciones.push_back({n, clasica, rapida});
     }
     std::cout << "checksum: " << checksum << "\n";
+
+    if (!guardarCsv(mediciones, ruta)) {
+        std::cerr << "No se pudo escribir " << ruta << "\n";
+        return 1;
+    }
+    std::cout << "Tiempos guardados en " << ruta << "\n";
     return 0;
 }
