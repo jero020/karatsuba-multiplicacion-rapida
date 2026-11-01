@@ -11,3 +11,8 @@ build/
 .vscode/
 .idea/
 cmake-build-*/
+
+/karatsuba_tests
+/karatsuba_tests.exe
+/karatsuba_bench
+/karatsuba_bench.exe
