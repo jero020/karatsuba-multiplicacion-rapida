@@ -144,7 +144,8 @@ La identidad de Karatsuba cambia cuatro productos por tres, y eso baja el expone
 - **Ruido en las mediciones.** Una corrida dio casi el doble en 64 dígitos y bajó la pendiente a 1.51. Por eso adoptamos la mediana y una corrida con el equipo libre.
 - **Integración.** Ambos creamos `src/bigint.cpp` por separado y hubo un conflicto de git, que resolvimos conservando las funciones de los dos.
 - **Autoría en el historial.** Los commits `415c084` y `161534e` son de Javier, pero figuran con el autor `jero020` por un error de configuración de git, aparentemente causado por la herramienta de IA que usaba; la página Activity del repositorio muestra que los subió desde su cuenta, y sus commits posteriores ya salen a su nombre.
-- **[COMPLETAR: dificultades de Javier y de Jeronimo con sus propias palabras]**
+- **Conectar los temas.** A Jeronimo le costó relacionar los temas vistos en clase: la identidad de tres productos, la recurrencia y su solución, y lo que se observa al medir. Los conectó al ver explicado el funcionamiento del algoritmo, función por función, con el apoyo de IA descrito en la sección 8.
+- **[COMPLETAR: dificultades de Javier con sus propias palabras]**
 
 ## 8. Declaración de uso de IA
 
