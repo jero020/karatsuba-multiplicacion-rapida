@@ -1,5 +1,6 @@
 #include "bigint.h"
 
+#include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <iomanip>
@@ -49,6 +50,17 @@ double medirMicrosegundos(Multiplicacion algoritmo, const Num& a, const Num& b) 
     }
 }
 
+// Repite la medicion y devuelve el valor del medio: un pico aislado, por ejemplo
+// porque otro programa ocupo el computador, no mueve la mediana.
+double medianaMicrosegundos(Multiplicacion algoritmo, const Num& a, const Num& b) {
+    std::vector<double> tiempos;
+    for (int i = 0; i < 5; ++i) {
+        tiempos.push_back(medirMicrosegundos(algoritmo, a, b));
+    }
+    std::sort(tiempos.begin(), tiempos.end());
+    return tiempos[tiempos.size() / 2];
+}
+
 struct Medicion {
     int digitos;
     double clasica;
@@ -78,8 +90,8 @@ int main() {
     for (int n = 2; n <= 4096; n *= 2) {
         const Num a = numeroAleatorio(n, generador);
         const Num b = numeroAleatorio(n, generador);
-        const double clasica = medirMicrosegundos(multiplicacionClasica, a, b);
-        const double rapida = medirMicrosegundos(karatsuba, a, b);
+        const double clasica = medianaMicrosegundos(multiplicacionClasica, a, b);
+        const double rapida = medianaMicrosegundos(karatsuba, a, b);
         std::cout << n << "  " << clasica << "  " << rapida << "\n";
         mediciones.push_back({n, clasica, rapida});
     }
