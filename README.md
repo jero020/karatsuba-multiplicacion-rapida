@@ -6,17 +6,20 @@ Implementación en C++ de la multiplicación de enteros grandes representados co
 
 ## Integrantes
 
-Javier Andres Sierra Machado
-Jeronimo Velez Acosta
-
+- Javier Andres Sierra Machado
+- Jeronimo Velez Acosta
 
 ## Estructura del repositorio
 
 ```
-include/      Interfaz compartida (bigint.h)
-src/          Código fuente: auxiliares, algoritmos, pruebas y benchmark
-resultados/   Tiempos medidos (CSV), script de gráfica y gráficas
-informe/      Informe de la práctica
+include/bigint.h        Interfaz compartida
+src/bigint.cpp          Conversiones y operaciones auxiliares
+src/multiplicacion.cpp  Multiplicación clásica y Karatsuba
+src/tests.cpp           Validación de correctitud
+src/benchmark.cpp       Medición de tiempos
+resultados/             Tiempos (CSV), tabla, gráfica y script auxiliar de la gráfica
+informe/                Informe de la práctica
+Makefile                Objetivos tests y bench
 ```
 
 ## Estado
@@ -24,13 +27,13 @@ informe/      Informe de la práctica
 - [x] Representación y operaciones auxiliares
 - [x] Multiplicación clásica
 - [x] Karatsuba
-- [ ] Validación
-- [ ] Medición de tiempos y punto de cruce
-- [ ] Informe
+- [x] Validación
+- [x] Medición de tiempos y punto de cruce
+- [ ] Informe (primera versión en `informe/informe.md`, en revisión)
 
 ## Compilación y ejecución
 
-Requisitos: compilador compatible con C++17 y GNU Make. Ejecutar los comandos desde la raíz del repositorio, después de integrar la parte B.
+Requisitos: compilador compatible con C++17 y GNU Make. Ejecutar los comandos desde la raíz del repositorio.
 
 ```sh
 make tests
@@ -53,6 +56,10 @@ g++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -Iinclude src/bigint.cpp src/multipl
 
 En Linux o macOS se ejecutan con `./karatsuba_tests` y `./karatsuba_bench`. En Windows, con `./karatsuba_tests.exe` y `./karatsuba_bench.exe` desde PowerShell.
 
+`make tests` compara Karatsuba y el método clásico en 134 casos e imprime el total de fallos; termina con error si alguno falla. Cubre números de 1 dígito, ceros a la izquierda, ceros intercalados, longitudes impares y productos de varios cientos de dígitos.
+
+`make bench` mide ambos algoritmos de 2 a 4096 dígitos, tarda cerca de un minuto y **reemplaza** `resultados/tiempos.csv`. Los valores del repositorio son los de la corrida usada en el informe; para repetirla, conviene cerrar otros programas. Si se ejecuta solo para probar, se puede restaurar el archivo con `git restore resultados/tiempos.csv`.
+
 ## Tabla y gráfica
 
 Los algoritmos y la medición están en C++. `resultados/graficar.py` es una herramienta auxiliar que solo presenta los tiempos medidos; no hace falta ejecutarla, porque la tabla y la gráfica ya están en `resultados/`. Para regenerarlas a partir de `resultados/tiempos.csv` se necesita Python 3 con matplotlib:
@@ -67,20 +74,13 @@ Usamos `Num`, un alias de `std::vector<int>`, en base 10. El índice 0 contiene 
 
 Un número normalizado no tiene ceros al final del vector, excepto el cero, que se representa como `{0}`. `desdeString` acepta ceros a la izquierda y rechaza cadenas vacías o con caracteres distintos de los dígitos decimales.
 
-## Parte A
-
-- `include/bigint.h`: interfaz compartida del plan de trabajo.
-- `src/bigint.cpp`: normalización, conversiones, suma y resta.
-- `src/multiplicacion.cpp`: Karatsuba y su función recursiva interna.
-- `informe/parte_A.md`: sección prevista de deducción de la identidad, Teorema Maestro y decisiones de implementación.
-- `Makefile`: objetivos para compilar y ejecutar las pruebas y el benchmark al integrar la parte B.
+## Operaciones
 
 `restar(a, b)` requiere `a >= b`. Si no se cumple, lanza `std::invalid_argument`. Las operaciones no modifican los operandos, salvo `normalizar`, que recibe una referencia al vector que debe modificar.
 
-## Integración con la parte B
-
-Las funciones `desplazar` y `partir` de la parte B ya están integradas en `src/bigint.cpp`. `multiplicacionClasica` ya está en `src/multiplicacion.cpp`. Queda incorporar `src/tests.cpp` y `src/benchmark.cpp`. Al unir los cambios hay que conservar las funciones de ambas partes.
-
 `partir(a, m, alta, baja)` separa los primeros `m` dígitos como parte baja y los restantes como parte alta, con `0 < m < a.size()`. Conserva los ceros de las dos partes. `desplazar(a, k)` agrega `k` ceros en las posiciones bajas para multiplicar por `10^k`, con `k >= 0`; puede devolver un cero con varios dígitos. Las sumas de la recomposición y el resultado público de Karatsuba quedan normalizados.
 
-Los objetivos `tests` y `bench` requieren los archivos de prueba y medición de la parte B. Las instrucciones de compilación anteriores se aplican cuando esos archivos estén incorporados. La sección del informe de A se incorpora por separado antes de unir el informe final.
+## Reparto del trabajo
+
+- **Parte A (Javier):** `normalizar`, `desdeString`, `aString`, `sumar`, `restar`, `karatsuba`, `Makefile` e `informe/parte_A.md`.
+- **Parte B (Jeronimo):** `desplazar`, `partir`, `multiplicacionClasica`, `src/tests.cpp`, `src/benchmark.cpp` y `resultados/`.
