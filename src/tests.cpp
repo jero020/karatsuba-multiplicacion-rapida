@@ -92,6 +92,36 @@ void probarLongitudesImpares() {
     comprobar("12345", "7", "86415");
 }
 
+// Texto formado por repeticiones de un patron: "12" y 3 da "121212".
+std::string repetir(const std::string& patron, int veces) {
+    std::string resultado;
+    for (int i = 0; i < veces; ++i) {
+        resultado += patron;
+    }
+    return resultado;
+}
+
+// Productos de varios cientos de digitos. Los resultados de nueves y de potencias
+// de 10 salen de una formula, asi que no dependen de ninguno de los dos algoritmos:
+// (10^n - 1)^2 = 99..9 8 00..0 1, con n - 1 nueves y n - 1 ceros.
+void probarProductosGrandes() {
+    for (int n : {300, 512, 513, 777}) {
+        const std::string nueves(n, '9');
+        comprobar(nueves, nueves, std::string(n - 1, '9') + "8" + std::string(n - 1, '0') + "1");
+
+        const std::string potencia = "1" + std::string(n, '0');
+        comprobar(potencia, potencia, "1" + std::string(2 * n, '0'));
+    }
+
+    // Longitudes muy distintas: (10^500 - 1) * 999 = 998 99..9 001, con 497 nueves.
+    comprobar(std::string(500, '9'), "999", "998" + std::string(497, '9') + "001");
+
+    // Sin formula sencilla: aqui se compara Karatsuba contra el clasico, que es la referencia.
+    const std::string a = repetir("1234567890", 30);
+    const std::string b = repetir("9876543210", 20);
+    comprobar(a, b, aString(multiplicacionClasica(desdeString(a), desdeString(b))));
+}
+
 }
 
 int main() {
@@ -100,6 +130,7 @@ int main() {
     probarCerosIzquierda();
     probarCerosIntercalados();
     probarLongitudesImpares();
+    probarProductosGrandes();
 
     std::cout << casos << " casos, " << fallos << " fallos\n";
     return fallos == 0 ? 0 : 1;
