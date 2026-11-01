@@ -63,3 +63,22 @@ Num karatsuba(const Num& a, const Num& b) {
     normalizar(resultado);
     return resultado;
 }
+
+// Metodo de la escuela: cada digito de a por cada digito de b, Theta(n^2).
+// El digito a[i] * b[j] aporta en la posicion i + j, y el producto de un numero
+// de n digitos por uno de m digitos tiene a lo sumo n + m digitos.
+Num multiplicacionClasica(const Num& a, const Num& b) {
+    Num resultado(a.size() + b.size(), 0);
+
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        int acarreo = 0;
+        for (std::size_t j = 0; j < b.size(); ++j) {
+            const int total = resultado[i + j] + a[i] * b[j] + acarreo;
+            resultado[i + j] = total % 10;
+            acarreo = total / 10;
+        }
+        resultado[i + b.size()] += acarreo;
+    }
+    normalizar(resultado);
+    return resultado;
+}
