@@ -6,8 +6,9 @@ Implementación en C++ de la multiplicación de enteros grandes representados co
 
 ## Integrantes
 
-- Nombre 1
-- Nombre 2
+Javier Andres Sierra Machado
+Jeronimo Velez Acosta
+
 
 ## Estructura del repositorio
 
