@@ -1,0 +1,13 @@
+# Ejecutables y objetos de compilación
+*.o
+*.out
+*.exe
+tests
+benchmark
+build/
+
+# Archivos del sistema / IDE
+.DS_Store
+.vscode/
+.idea/
+cmake-build-*/
