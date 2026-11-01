@@ -1,5 +1,6 @@
 #include "bigint.h"
 
+#include <exception>
 #include <iostream>
 #include <string>
 
@@ -12,19 +13,42 @@ int fallos = 0;
 // Compara vectores y no textos porque aString normaliza y esconderia un resultado
 // con ceros de sobra.
 void comprobar(const std::string& a, const std::string& b, const std::string& esperado) {
-    const Num x = desdeString(a);
-    const Num y = desdeString(b);
-    const Num correcto = desdeString(esperado);
-    const Num clasica = multiplicacionClasica(x, y);
-    const Num rapida = karatsuba(x, y);
-
     ++casos;
-    if (clasica != correcto || rapida != correcto) {
+    try {
+        const Num x = desdeString(a);
+        const Num y = desdeString(b);
+        const Num correcto = desdeString(esperado);
+        const Num clasica = multiplicacionClasica(x, y);
+        const Num rapida = karatsuba(x, y);
+
+        if (clasica != correcto || rapida != correcto) {
+            ++fallos;
+            std::cout << "FALLA " << a << " x " << b << ": esperado " << esperado
+                      << ", clasica " << aString(clasica) << " (" << clasica.size() << " digitos)"
+                      << ", karatsuba " << aString(rapida) << " (" << rapida.size() << " digitos)\n";
+        }
+    } catch (const std::exception& e) {
+        // restar lanza una excepcion si a < b: cuenta como fallo y las pruebas siguen.
         ++fallos;
-        std::cout << "FALLA " << a << " x " << b << ": esperado " << esperado
-                  << ", clasica " << aString(clasica) << " (" << clasica.size() << " digitos)"
-                  << ", karatsuba " << aString(rapida) << " (" << rapida.size() << " digitos)\n";
+        std::cout << "FALLA " << a << " x " << b << ": excepcion: " << e.what() << "\n";
     }
+}
+
+// La interfaz promete que la entrada queda normalizada, asi que se revisa el vector directamente.
+void comprobarConversion(const std::string& texto, const Num& vector, const std::string& salida) {
+    ++casos;
+    if (desdeString(texto) != vector || aString(vector) != salida) {
+        ++fallos;
+        std::cout << "FALLA conversion de \"" << texto << "\"\n";
+    }
+}
+
+void probarConversiones() {
+    comprobarConversion("123", Num{3, 2, 1}, "123");
+    comprobarConversion("00123", Num{3, 2, 1}, "123");
+    comprobarConversion("0", Num{0}, "0");
+    comprobarConversion("0000", Num{0}, "0");
+    comprobarConversion("1002", Num{2, 0, 0, 1}, "1002");
 }
 
 // Caso base de Karatsuba: los 100 productos posibles de dos digitos, incluidos 0 x 9 y 9 x 9.
@@ -54,12 +78,28 @@ void probarCerosIntercalados() {
     comprobar("90009", "90009", "8101620081");
 }
 
+// Longitudes que no son potencia de 2: obligan a rellenar antes de la recursion.
+// Los nueves hacen que x1 + x0 crezca un digito.
+void probarLongitudesImpares() {
+    comprobar("123", "456", "56088");
+    comprobar("12345", "67890", "838102050");
+    comprobar("1234567", "7654321", "9449772114007");
+    comprobar("999", "999", "998001");
+    comprobar("99999", "99999", "9999800001");
+    comprobar("9999999", "9999999", "99999980000001");
+    comprobar("123", "4567890", "561850470");
+    comprobar("7654321", "123", "941481483");
+    comprobar("12345", "7", "86415");
+}
+
 }
 
 int main() {
+    probarConversiones();
     probarUnDigito();
     probarCerosIzquierda();
     probarCerosIntercalados();
+    probarLongitudesImpares();
 
     std::cout << casos << " casos, " << fallos << " fallos\n";
     return fallos == 0 ? 0 : 1;
