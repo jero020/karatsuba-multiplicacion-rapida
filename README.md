@@ -53,6 +53,14 @@ g++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -Iinclude src/bigint.cpp src/multipl
 
 En Linux o macOS se ejecutan con `./karatsuba_tests` y `./karatsuba_bench`. En Windows, con `./karatsuba_tests.exe` y `./karatsuba_bench.exe` desde PowerShell.
 
+## Tabla y gráfica
+
+Los algoritmos y la medición están en C++. `resultados/graficar.py` es una herramienta auxiliar que solo presenta los tiempos medidos; no hace falta ejecutarla, porque la tabla y la gráfica ya están en `resultados/`. Para regenerarlas a partir de `resultados/tiempos.csv` se necesita Python 3 con matplotlib:
+
+```sh
+python3 resultados/graficar.py
+```
+
 ## Representación
 
 Usamos `Num`, un alias de `std::vector<int>`, en base 10. El índice 0 contiene las unidades: `123` se guarda como `{3, 2, 1}`. Cada elemento debe estar entre 0 y 9. Los números son no negativos.
