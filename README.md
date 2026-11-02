@@ -29,7 +29,7 @@ Makefile                Objetivos tests y bench
 - [x] Karatsuba
 - [x] Validación
 - [x] Medición de tiempos y punto de cruce
-- [ ] Informe (primera versión en `informe/informe.md`, en revisión)
+- [x] Informe (primera versión en `informe/informe.md`, en revisión)
 
 ## Compilación y ejecución
 
